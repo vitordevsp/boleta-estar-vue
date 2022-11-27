@@ -22,9 +22,8 @@
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  min-height: 100vh;
 }
 
 body {
@@ -36,4 +35,16 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text);
 }
