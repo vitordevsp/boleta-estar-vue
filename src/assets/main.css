@@ -1,4 +1,16 @@
-:root {}
+:root {
+  --color-bg: #212529;
+  --color-text: #fff;
+
+  --color-primary: #00E2FC;
+  --color-secondary: #FF55A7;
+
+  --color-gray-light: #302E36;
+  --color-gray: #242329;
+  --color-gray-dark: #18171B;
+
+  --border-color: #3D3D3D;
+}
 
 *,
 *::before,
