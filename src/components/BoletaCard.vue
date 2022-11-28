@@ -2,6 +2,7 @@
 import { watch, ref } from "vue"
 import { useStore } from "vuex"
 import BaseInput from "@/components/BaseInput.vue"
+import BasePasswordInput from "./BasePasswordInput.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import { containsOnlyNumbers } from "@/utils/validators"
 import { formatFloat } from "@/utils/masks"
@@ -78,7 +79,7 @@ const submitOrder = (type: IOrderType) => {
 
     <BaseInput title="Valor da Ordem" v-model="order.amount" mask="money" />
 
-    <BaseInput title="Assinatura eletrônica" v-model="password" />
+    <BasePasswordInput title="Assinatura eletrônica" v-model="password" />
 
     <div id="container-actions">
       <BaseButton variant="primary-color" :onClick="() => submitOrder('purchase')" :disable="isBlockedActions">
