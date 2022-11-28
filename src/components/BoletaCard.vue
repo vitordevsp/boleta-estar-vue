@@ -4,15 +4,16 @@ import { useStore } from "vuex"
 import BaseInput from "@/components/BaseInput.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import { containsOnlyNumbers } from "@/utils/validators"
-import IconLightning from "@/assets/icons/IconLightning.vue"
+import { formatFloat } from "@/utils/masks"
 import type { IStore } from "@/types/store"
 import type { IOrderSubmit, IOrderType } from "@/types/order"
+import IconLightning from "@/assets/icons/IconLightning.vue"
 
 const store = useStore<IStore>()
 
 const order = ref({
   active: "SMU",
-  quantity: "0",
+  quantity: "",
   amount: "",
 })
 
@@ -21,9 +22,9 @@ const password = ref("")
 const isBlockedActions = ref(true)
 
 watch(order, () => {
-  const amountNumber = Number(order.value.amount)
+  const quantityNumber = Number(order.value.quantity)
 
-  if (!Number.isInteger(amountNumber)) {
+  if (!Number.isInteger(quantityNumber)) {
     isBlockedActions.value = true
     return
   }
@@ -49,7 +50,7 @@ const submitOrder = (type: IOrderType) => {
   const newOrder: IOrderSubmit = {
     active: order.value.active,
     quantity: Number(order.value.quantity),
-    amount: Number(order.value.amount),
+    amount: formatFloat(order.value.amount),
     type,
   }
 
@@ -57,7 +58,7 @@ const submitOrder = (type: IOrderType) => {
 
   order.value = {
     active: "SMU",
-    quantity: "0",
+    quantity: "",
     amount: "",
   }
 
@@ -75,7 +76,7 @@ const submitOrder = (type: IOrderType) => {
 
     <BaseInput title="Quantidade" v-model="order.quantity" type="number" />
 
-    <BaseInput title="Valor da Ordem" v-model="order.amount" />
+    <BaseInput title="Valor da Ordem" v-model="order.amount" mask="money" />
 
     <BaseInput title="Assinatura eletrônica" v-model="password" />
 

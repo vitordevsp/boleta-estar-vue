@@ -3,6 +3,7 @@ import { computed } from "vue"
 import { useStore } from "vuex"
 import OfferList, { type IOfferListData } from "./OfferList.vue"
 import type { IStore } from "@/types/store"
+import { formatCurrency } from "@/utils/masks"
 
 const store = useStore<IStore>()
 
@@ -29,7 +30,7 @@ const purchaseOrders = computed(() => {
     const obj: IOfferListData = {
       id: order.id,
       qnt: String(order.quantity),
-      price: String(order.amount),
+      price: formatCurrency(order.amount),
       percentage,
     }
 
@@ -60,7 +61,7 @@ const saleOrders = computed(() => {
     const obj: IOfferListData = {
       id: order.id,
       qnt: String(order.quantity),
-      price: String(order.amount),
+      price: formatCurrency(order.amount),
       percentage,
     }
 

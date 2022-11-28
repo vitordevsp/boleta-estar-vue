@@ -1,20 +1,34 @@
 <script setup lang="ts">
+import { typingFormatReal } from "@/utils/masks"
+
 interface IBaseInput {
   title: string
   modelValue?: string
   type?: string
   disabled?: boolean
+  mask?: "money"
 }
 
-defineProps<IBaseInput>()
-defineEmits(["update:modelValue"])
+const props = defineProps<IBaseInput>()
+const emit = defineEmits(["update:modelValue"])
+
+const onInput = (event: Event) => {
+  let value = (event.target as HTMLInputElement).value
+
+  if (props.mask) {
+    const format = typingFormatReal(value)
+    value = `R$ ${format}`
+  }
+
+  emit("update:modelValue", value)
+}
+
 </script>
 
 <template>
   <div>
     <span>{{ title }}</span>
-    <input :type="type" :disabled="disabled" :value="modelValue"
-      @input="$emit('update:modelValue', ($event as any).target.value)">
+    <input :type="type" :disabled="disabled" :value="modelValue" @input="onInput">
   </div>
 </template>
 
