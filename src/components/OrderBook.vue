@@ -1,26 +1,72 @@
 <script setup lang="ts">
-import OfferList from "./OfferList.vue"
+import { computed } from "vue"
+import { useStore } from "vuex"
+import OfferList, { type IOfferListData } from "./OfferList.vue"
+import type { IStore } from "@/types/store"
 
-const list = [
-  {
-    id: "1",
-    qnt: "1",
-    price: "R$ 900,00",
-    percentage: 50,
-  },
-  {
-    id: "2",
-    qnt: "1",
-    price: "R$ 400,00",
-    percentage: 20,
-  },
-  {
-    id: "3",
-    qnt: "2",
-    price: "R$ 300,00",
-    percentage: 100,
-  }
-]
+const store = useStore<IStore>()
+
+const purchaseOrders = computed(() => {
+  const arrayPurchaseOrders = store.state.orders
+    .filter(order => order.type === "purchase")
+
+  const maxOrder = arrayPurchaseOrders.reduce((maxOrder, order) => {
+    const maxOrderPrice = maxOrder.quantity * maxOrder.amount
+    const orderPrice = order.quantity * order.amount
+
+    return orderPrice > maxOrderPrice ? order : maxOrder
+  }, {
+    quantity: 0,
+    amount: 0,
+  })
+
+  const maxPrice = maxOrder.quantity * maxOrder.amount
+
+  return arrayPurchaseOrders.map(order => {
+    const orderPrice = order.quantity * order.amount
+    const percentage = (orderPrice * 100) / maxPrice
+
+    const obj: IOfferListData = {
+      id: order.id,
+      qnt: String(order.quantity),
+      price: String(order.amount),
+      percentage,
+    }
+
+    return obj
+  })
+})
+
+const saleOrders = computed(() => {
+  const arraySaleOrders = store.state.orders
+    .filter(order => order.type === "sale")
+
+  const maxOrder = arraySaleOrders.reduce((maxOrder, order) => {
+    const maxOrderPrice = maxOrder.quantity * maxOrder.amount
+    const orderPrice = order.quantity * order.amount
+
+    return orderPrice > maxOrderPrice ? order : maxOrder
+  }, {
+    quantity: 0,
+    amount: 0,
+  })
+
+  const maxPrice = maxOrder.quantity * maxOrder.amount
+
+  return arraySaleOrders.map(order => {
+    const orderPrice = order.quantity * order.amount
+    const percentage = (orderPrice * 100) / maxPrice
+
+    const obj: IOfferListData = {
+      id: order.id,
+      qnt: String(order.quantity),
+      price: String(order.amount),
+      percentage,
+    }
+
+    return obj
+  })
+})
 </script>
 
 <template>
@@ -30,8 +76,8 @@ const list = [
     </header>
 
     <main>
-      <OfferList offerType="purchase" emptyListMessage="Ainda não há ordens de compra." :data="list" />
-      <OfferList offerType="sale" emptyListMessage="Ainda não há ordens de venda." :data="list" />
+      <OfferList offerType="purchase" emptyListMessage="Ainda não há ordens de compra." :data="purchaseOrders" />
+      <OfferList offerType="sale" emptyListMessage="Ainda não há ordens de venda." :data="saleOrders" />
     </main>
   </section>
 </template>
