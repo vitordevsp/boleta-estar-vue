@@ -1,16 +1,20 @@
 <script setup lang="ts">
 interface IBaseInput {
   title: string
+  modelValue?: string
   type?: string
+  disabled?: boolean
 }
 
 defineProps<IBaseInput>()
+defineEmits(["update:modelValue"])
 </script>
 
 <template>
   <div>
     <span>{{ title }}</span>
-    <input :type="type">
+    <input :type="type" :disabled="disabled" :value="modelValue"
+      @input="$emit('update:modelValue', ($event as any).target.value)">
   </div>
 </template>
 
