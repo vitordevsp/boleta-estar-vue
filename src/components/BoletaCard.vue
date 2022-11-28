@@ -1,7 +1,68 @@
 <script setup lang="ts">
+import { watch, ref } from "vue"
+import { useStore } from "vuex"
 import BaseInput from "@/components/BaseInput.vue"
 import BaseButton from "@/components/BaseButton.vue"
+import { containsOnlyNumbers } from "@/utils/validators"
 import IconLightning from "@/assets/icons/IconLightning.vue"
+import type { IStore } from "@/types/store"
+import type { IOrderSubmit, IOrderType } from "@/types/order"
+
+const store = useStore<IStore>()
+
+const order = ref({
+  active: "SMU",
+  quantity: "0",
+  amount: "",
+})
+
+const password = ref("")
+
+const isBlockedActions = ref(true)
+
+watch(order, () => {
+  const amountNumber = Number(order.value.amount)
+
+  if (!Number.isInteger(amountNumber)) {
+    isBlockedActions.value = true
+    return
+  }
+
+  if (order.value.amount.length <= 0) {
+    isBlockedActions.value = true
+    return
+  }
+
+  isBlockedActions.value = false
+}, {
+  deep: true
+})
+
+const submitOrder = (type: IOrderType) => {
+  const onlyNumbers = containsOnlyNumbers(password.value)
+
+  if (password.value.length !== 8 || !onlyNumbers) {
+    alert("Assinatura eletrônica deve conter 8 digitos númericos.")
+    return
+  }
+
+  const newOrder: IOrderSubmit = {
+    active: order.value.active,
+    quantity: Number(order.value.quantity),
+    amount: Number(order.value.amount),
+    type,
+  }
+
+  store.dispatch("sendOrder", newOrder)
+
+  order.value = {
+    active: "SMU",
+    quantity: "0",
+    amount: "",
+  }
+
+  password.value = ""
+}
 </script>
 
 <template>
@@ -10,20 +71,20 @@ import IconLightning from "@/assets/icons/IconLightning.vue"
       <IconLightning />
     </header>
 
-    <BaseInput title="Ativo" />
+    <BaseInput title="Ativo" v-model="order.active" disabled />
 
-    <BaseInput title="Quantidade" type="number" />
+    <BaseInput title="Quantidade" v-model="order.quantity" type="number" />
 
-    <BaseInput title="Valor da Ordem" />
+    <BaseInput title="Valor da Ordem" v-model="order.amount" />
 
-    <BaseInput title="Assinatura eletrônica" />
+    <BaseInput title="Assinatura eletrônica" v-model="password" />
 
     <div id="container-actions">
-      <BaseButton variant="primary-color" disable>
+      <BaseButton variant="primary-color" :onClick="() => submitOrder('purchase')" :disable="isBlockedActions">
         Comprar
       </BaseButton>
 
-      <BaseButton variant="secondary-color" disable>
+      <BaseButton variant="secondary-color" :onClick="() => submitOrder('sale')" :disable="isBlockedActions">
         Vender
       </BaseButton>
     </div>
