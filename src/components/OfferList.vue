@@ -1,13 +1,15 @@
 <script setup lang="ts">
+export interface IOfferListData {
+  id: string
+  qnt: string
+  price: string
+  percentage: number
+}
+
 interface IOfferList {
   offerType: "purchase" | "sale"
   emptyListMessage: string
-  data: {
-    id: string
-    qnt: string
-    price: string
-    percentage: number
-  }[]
+  data: IOfferListData[]
 }
 
 defineProps<IOfferList>()
