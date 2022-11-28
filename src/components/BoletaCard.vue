@@ -25,7 +25,7 @@ const isBlockedActions = ref(true)
 watch(order, () => {
   const quantityNumber = Number(order.value.quantity)
 
-  if (!Number.isInteger(quantityNumber)) {
+  if (!Number.isInteger(quantityNumber) || quantityNumber <= 0) {
     isBlockedActions.value = true
     return
   }
